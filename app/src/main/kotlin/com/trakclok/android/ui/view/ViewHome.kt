@@ -14,6 +14,7 @@ import com.trakclok.android.ui.item.ItemLottieRefresh
 import com.trakclok.android.ui.layout.LayoutSwipeRefresh
 import com.trakclok.android.ui.theme.TrakClokTheme
 import com.trakclok.android.viewmodel.ViewModelHome
+import kotlin.coroutines.coroutineContext
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
@@ -44,6 +45,8 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
             projects.refresh()
         }
     ) {
+
+        val context =
 
         // --- lazy column
         CtLazy(

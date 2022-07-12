@@ -8,7 +8,7 @@ data class ObjectProject(
     val id: String,
     val name: String,
     val color: String,
-    val time: Number,
+    val time: Long,
     val active: Boolean,
     val type: String,
     val splits: Map<String, ObjectProjectSplit>?
@@ -19,6 +19,6 @@ data class ObjectProject(
 }
 
 data class ObjectProjectSplit(
-    val from: Number,
-    val to: Number
+    val from: Long,
+    val to: Long
 )
