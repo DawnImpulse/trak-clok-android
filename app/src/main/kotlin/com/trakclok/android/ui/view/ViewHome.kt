@@ -5,6 +5,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.trakclok.android.mapping.objects.ObjectHomeHeader
@@ -46,7 +47,11 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
         }
     ) {
 
-        val context =
+        // --- start timers
+        DisposableEffect(projects){
+            viewModel.startTimers(projects)
+            onDispose { viewModel.stopTimers() }
+        }
 
         // --- lazy column
         CtLazy(
@@ -59,6 +64,9 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                     day = it.day,
                     month = it.month
                 )
+                else {
+
+                }
             },
 
             // --- on refresh

@@ -39,7 +39,7 @@ object F {
      * calculated by current time - given time
      * @param time - in milliseconds since epoch
      */
-    fun getActiveTime(time: Long): ObjectTime {
+    fun parseLongTime(time: Long): ObjectTime {
 
         val current = System.currentTimeMillis()
         val diff = current - time
