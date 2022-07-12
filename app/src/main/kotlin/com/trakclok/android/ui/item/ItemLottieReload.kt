@@ -15,7 +15,6 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.trakclok.android.R
-import com.wlpapr.android.ui.item.ItemRaw
 
 @Preview(heightDp = 100, widthDp = 200)
 @Composable

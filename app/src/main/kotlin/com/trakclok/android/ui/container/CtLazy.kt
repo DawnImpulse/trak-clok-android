@@ -25,7 +25,7 @@ import com.trakclok.android.ui.item.ItemLottieReload
 fun <T : Any> CtLazy(
     data: LazyPagingItems<T>,
     item: @Composable LazyItemScope.(item: T, index: Int) -> Unit,
-    scrolled: () -> Unit,
+    scrolled: (() -> Unit)? = null,
     refresh: LazyListScope.() -> Unit,
     reload: (LazyListScope.() -> Unit)? = null,
     refreshError: (LazyListScope.() -> Unit)? = null,
@@ -39,7 +39,7 @@ fun <T : Any> CtLazy(
         object : NestedScrollConnection {
             override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
                 //val delta = available.y
-                scrolled()
+                scrolled?.invoke()
                 return Offset.Zero
             }
         }

@@ -10,5 +10,6 @@ import androidx.navigation.NavHostController
 object Cfg {
     lateinit var navigation: NavHostController // nav controller
 
+    var topInset = 0 // top display cutout inset
     val darkMode: MutableState<DarkMode> = mutableStateOf(DarkMode.System) // current dark mode status
 }
