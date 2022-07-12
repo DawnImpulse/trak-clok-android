@@ -6,6 +6,8 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.paging.cachedIn
+import com.trakclok.android.database.data.DataHome
 import kotlinx.coroutines.flow.Flow
 
 class ViewModelHome : ViewModel() {
@@ -14,5 +16,6 @@ class ViewModelHome : ViewModel() {
     val isRefreshing = mutableStateOf(false)
 
     // --- get all projects
-    lateinit var projects: Flow<PagingData<Any>>
+    var projects: Flow<PagingData<Any>> =
+        Pager(PagingConfig(50)) { DataHome() }.flow.cachedIn(viewModelScope)
 }

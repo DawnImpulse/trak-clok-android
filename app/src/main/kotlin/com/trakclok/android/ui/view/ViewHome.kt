@@ -1,18 +1,15 @@
 package com.trakclok.android.ui.view
 
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetValue
-import androidx.compose.material.rememberModalBottomSheetState
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FabPosition
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
+import com.trakclok.android.mapping.objects.ObjectHomeHeader
 import com.trakclok.android.ui.container.CtLazy
+import com.trakclok.android.ui.content.ContentHomeHeader
 import com.trakclok.android.ui.item.ItemLottieRefresh
 import com.trakclok.android.ui.layout.LayoutSwipeRefresh
 import com.trakclok.android.ui.theme.TrakClokTheme
@@ -48,13 +45,17 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
         }
     ) {
 
-        // lazy column
+        // --- lazy column
         CtLazy(
             data = projects,
 
             // --- actual item to show
             item = { it, _ ->
-                // ContentImage(height, image = it)
+                if (it is ObjectHomeHeader) ContentHomeHeader(
+                    date = it.date,
+                    day = it.day,
+                    month = it.month
+                )
             },
 
             // --- on refresh

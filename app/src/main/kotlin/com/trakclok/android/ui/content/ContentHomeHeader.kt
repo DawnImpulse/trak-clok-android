@@ -1,9 +1,6 @@
-package com.trakclok.android.ui.layout
+package com.trakclok.android.ui.content
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,8 +15,11 @@ import com.trakclok.android.ui.container.CtBoxIcon
 
 @Preview(widthDp = 400)
 @Composable
-fun LayoutHomeHeader(date: String = "09", month: String = "April, Sunday") {
-    Box(Modifier.padding(horizontal = 24.dp)) {
+fun ContentHomeHeader(date: String = "09", month: String = "April", day: String = "Sunday") {
+    Box(
+        Modifier
+            .padding(horizontal = 24.dp, vertical = 16.dp)
+            .fillMaxWidth()) {
         // --- date
         Column {
             Text(
@@ -29,7 +29,7 @@ fun LayoutHomeHeader(date: String = "09", month: String = "April, Sunday") {
                 fontWeight = FontWeight.Bold
             )
             Text(
-                text = month,
+                text = "$month, $day",
                 style = MaterialTheme.typography.titleSmall,
                 color = MaterialTheme.colorScheme.secondary
             )
@@ -48,7 +48,8 @@ fun LayoutHomeHeader(date: String = "09", month: String = "April, Sunday") {
                 res = R.drawable.vd_plus_square,
                 click = { /*TODO*/ },
                 tint = MaterialTheme.colorScheme.primary,
-                size = 48.dp
+                size = 48.dp,
+                modifier = Modifier.padding(start = 8.dp)
             )
         }
     }
