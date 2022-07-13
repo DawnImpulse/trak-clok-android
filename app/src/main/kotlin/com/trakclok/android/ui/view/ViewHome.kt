@@ -1,11 +1,19 @@
 package com.trakclok.android.ui.view
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material.Card
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.trakclok.android.mapping.objects.ObjectHomeHeader
@@ -41,47 +49,43 @@ fun ViewHome(viewModelHome: ViewModelHome = viewModel()) {
 @ExperimentalMaterial3Api
 @Composable
 fun ViewHomeListing(viewModel: ViewModelHome) {
-    val projects = viewModel.projects.collectAsLazyPagingItems()
-
-    // swipe refresh
-    LayoutSwipeRefresh(
-        isRefreshing = viewModel.isRefreshing.value,
-        onRefresh = {
-            viewModel.isRefreshing.value = true
-            projects.refresh()
-        }
+    // --- scrollable list
+    Column(
+        Modifier.verticalScroll(rememberScrollState())
     ) {
+        // --- header
+        ContentHomeHeader()
 
-        // --- lazy column
-        CtLazy(
-            data = projects,
+        // --- loading
+        AnimatedVisibility(visible = viewModel.loading.value) {
+            ItemLottieRefresh()
+        }
 
-            // --- actual item to show
-            item = { it, _ ->
-                if (it is ObjectHomeHeader) ContentHomeHeader(
-                    date = it.date,
-                    day = it.day,
-                    month = it.month
-                )
-                else if (it is ObjectProject) {
+        // --- list
+        AnimatedVisibility(visible = !viewModel.loading.value && viewModel.error.value == null && !viewModel.empty.value) {
+            // --- card
+            Card(
+                Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+                shape = RoundedCornerShape(16.dp)
+            ) {
+                // --- on each
+                viewModel.activeProjects.value.forEach {
+
                     // --- start timer
                     viewModel.startTimer(it)
 
                     // --- set content
-                    ContentProject(
-                        params = ParamsContentProject(
-                            time = viewModel.listTime[it.id]!!,
-                            project = it
+                    Box(Modifier.padding(horizontal = 12.dp, vertical = 24.dp)) {
+                        ContentProject(
+                            params = ParamsContentProject(
+                                time = viewModel.listTime[it.id]!!,
+                                project = it
+                            ),
                         )
-                    )
+                    }
                 }
-            },
+            }
+        }
 
-            // --- on refresh
-            refresh = {
-                viewModel.isRefreshing.value = false
-                item { ItemLottieRefresh() }
-            },
-        )
     }
 }

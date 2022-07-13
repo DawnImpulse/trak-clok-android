@@ -4,32 +4,75 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.compose.LazyPagingItems
-import com.trakclok.android.database.data.DataHome
+import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
+import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.ktx.Firebase
+import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
-import com.trakclok.android.utils.extension.log
-import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 
 class ViewModelHome : ViewModel() {
 
+    // --- projects
+    val activeProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
+    val inactiveProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
+
+    // --- loading & error
+    val loading = mutableStateOf(true)
+    val error: MutableState<String?> = mutableStateOf(null)
+    val empty = mutableStateOf(false)
+
     // --- refresh status
     val isRefreshing = mutableStateOf(false)
 
-    // --- get all projects
-    var projects: Flow<PagingData<Any>> =
-        Pager(PagingConfig(50)) { DataHome() }.flow.cachedIn(viewModelScope)
-
     // --- list of all times
     val listTime: MutableMap<String, MutableState<ObjectTime>> = mutableMapOf()
+
+    // --- get projects on init
+    init {
+        getProjects()
+    }
+
+    // --- get projects
+    private fun getProjects() {
+
+        // --- clear projects list
+        loading.value = true
+        error.value = null
+
+        // --- launch scope
+        viewModelScope.launch {
+            try {
+                val list = RealtimeProjects.getList()
+                val active = mutableListOf<ObjectProject>()
+                val inactive = mutableListOf<ObjectProject>()
+
+                // --- create list of active & inactive
+                list.forEach {
+                    if (it.active) active.add(it)
+                    else inactive.add(it)
+                }
+
+                // --- check if empty
+                empty.value = active.isEmpty() && inactive.isEmpty()
+                loading.value = false
+
+                // --- set lists
+                activeProjects.value = active
+                inactiveProjects.value = inactive
+            }
+            // --- exception
+            catch (e: Exception) {
+                error.value = e.message
+                loading.value = false
+                e.printStackTrace()
+                Firebase.crashlytics.recordException(e)
+            }
+        }
+    }
 
     /**
      * start timer
