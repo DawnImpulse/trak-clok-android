@@ -10,10 +10,14 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.trakclok.android.mapping.objects.ObjectHomeHeader
@@ -61,27 +65,83 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
             ItemLottieRefresh()
         }
 
-        // --- list
-        AnimatedVisibility(visible = !viewModel.loading.value && viewModel.error.value == null && !viewModel.empty.value) {
-            // --- card
-            Card(
-                Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
-                shape = RoundedCornerShape(16.dp)
-            ) {
-                // --- on each
-                viewModel.activeProjects.value.forEach {
+        // --- active projects
+        AnimatedVisibility(
+            visible = !viewModel.loading.value
+                    && !viewModel.empty.value
+                    && viewModel.error.value == null
+                    && viewModel.activeProjects.value.isNotEmpty()
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "ACTIVE",
+                    color = MaterialTheme.colorScheme.secondary,
+                    style = MaterialTheme.typography.titleMedium,
+                    letterSpacing = 2.sp,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                    fontWeight = FontWeight.Bold
+                )
 
-                    // --- start timer
-                    viewModel.startTimer(it)
+                Card(
+                    Modifier.padding(horizontal = 12.dp, vertical = 16.dp),
+                    shape = RoundedCornerShape(16.dp)
+                ) {
+                    Column() {
+                        // --- on each
+                        viewModel.activeProjects.value.forEach {
 
-                    // --- set content
-                    Box(Modifier.padding(horizontal = 12.dp, vertical = 24.dp)) {
-                        ContentProject(
-                            params = ParamsContentProject(
-                                time = viewModel.listTime[it.id]!!,
-                                project = it
-                            ),
-                        )
+                            // --- start timer
+                            viewModel.startTimer(it)
+
+                            // --- set content
+                            Box(Modifier.padding(horizontal = 12.dp, vertical = 24.dp)) {
+                                ContentProject(
+                                    params = ParamsContentProject(
+                                        time = viewModel.listTime[it.id]!!,
+                                        project = it
+                                    ),
+                                )
+                            }
+                        }
+                    }
+
+                }
+            }
+        }
+
+        // --- inactive projects
+        AnimatedVisibility(
+            visible = !viewModel.loading.value
+                    && !viewModel.empty.value
+                    && viewModel.error.value == null
+                    && viewModel.inactiveProjects.value.isNotEmpty()
+        ) {
+            Column(Modifier.padding(top = 8.dp),horizontalAlignment = Alignment.CenterHorizontally) {
+                Text(
+                    text = "INACTIVE",
+                    color = MaterialTheme.colorScheme.error,
+                    style = MaterialTheme.typography.titleMedium,
+                    letterSpacing = 2.sp,
+                    modifier = Modifier.padding(top = 16.dp, bottom = 8.dp),
+                    fontWeight = FontWeight.Bold
+                )
+
+                Column(Modifier.padding(horizontal = 12.dp, vertical = 16.dp)) {
+                    // --- on each
+                    viewModel.inactiveProjects.value.forEach {
+
+                        // --- start timer
+                        viewModel.startTimer(it)
+
+                        // --- set content
+                        Box(Modifier.padding(horizontal = 12.dp, vertical = 24.dp)) {
+                            ContentProject(
+                                params = ParamsContentProject(
+                                    time = viewModel.listTime[it.id]!!,
+                                    project = it
+                                ),
+                            )
+                        }
                     }
                 }
             }

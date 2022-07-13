@@ -18,6 +18,7 @@ import com.trakclok.android.R
 import com.trakclok.android.utils.extension.toComposeColor
 import com.trakclok.android.mapping.params.ParamsContentProject
 import com.trakclok.android.mapping.preview.PreviewContentProject
+import com.trakclok.android.ui.container.CtBoxIcon
 import com.trakclok.android.ui.container.CtIcon
 import com.trakclok.android.ui.container.CtSurface
 
@@ -51,20 +52,43 @@ fun ContentProject(@PreviewParameter(PreviewContentProject::class) params: Param
             )
 
             // --- pause button
-            CtSurface(
-                Modifier
-                    .size(36.dp),
-                click = { /*TODO*/ },
-                shape = RoundedCornerShape(12.dp),
-                color = MaterialTheme.colorScheme.tertiaryContainer,
-                ripple = MaterialTheme.colorScheme.tertiary
-            ) {
-                CtIcon(
-                    res = R.drawable.vd_pause,
-                    tint = MaterialTheme.colorScheme.onTertiaryContainer,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
+            if (params.project.active)
+                CtSurface(
+                    Modifier
+                        .size(36.dp),
+                    click = { /*TODO*/ },
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.tertiaryContainer,
+                    ripple = MaterialTheme.colorScheme.tertiary
+                ) {
+                    CtIcon(
+                        res = R.drawable.ic_frame_5,
+                        tint = MaterialTheme.colorScheme.onTertiaryContainer,
+                        modifier = Modifier.padding(10.dp)
+                    )
+                }
+
+            // --- play button
+            if (!params.project.active)
+                CtSurface(
+                    Modifier
+                        .size(36.dp),
+                    click = { /*TODO*/ },
+                    shape = RoundedCornerShape(14.dp),
+                    color = MaterialTheme.colorScheme.onTertiaryContainer,
+                    ripple = MaterialTheme.colorScheme.tertiary
+                ) {
+                    CtIcon(
+                        res = R.drawable.vd_play_alt,
+                        tint = MaterialTheme.colorScheme.tertiaryContainer,
+                        modifier = Modifier.padding(
+                            start = 10.dp,
+                            top = 8.dp,
+                            end = 8.dp,
+                            bottom = 8.dp
+                        )
+                    )
+                }
         }
 
         // --- time
