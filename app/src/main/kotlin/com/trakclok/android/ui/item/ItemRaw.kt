@@ -7,7 +7,7 @@ import com.trakclok.android.utils.Cfg
 import com.trakclok.android.utils.DarkMode
 
 @Composable
-fun ItemRaw(@RawRes light: Int, @RawRes dark: Int): Int {
+fun ItemRaw(@RawRes light: Int, @RawRes dark: Int = light): Int {
     return if (Cfg.darkMode.value == DarkMode.Dark || isSystemInDarkTheme()) dark
     else light
 }

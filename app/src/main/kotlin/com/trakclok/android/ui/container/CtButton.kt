@@ -1,11 +1,7 @@
 package com.trakclok.android.ui.container
 
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Button
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
-import androidx.compose.material3.contentColorFor
+import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -27,11 +23,11 @@ fun CtButton(
         onClick = onClick,
         modifier = modifier,
         colors = ButtonDefaults.buttonColors(
-            backgroundColor = color,
+            containerColor = color,
             contentColor = MaterialTheme.colorScheme.contentColorFor(color)
         ),
         shape = shape,
-        enabled = enabled
+        enabled = enabled,
     ) {
         Text(
             text = label,

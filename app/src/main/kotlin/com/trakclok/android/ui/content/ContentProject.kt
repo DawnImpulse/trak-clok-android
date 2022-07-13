@@ -18,7 +18,6 @@ import com.trakclok.android.R
 import com.trakclok.android.utils.extension.toComposeColor
 import com.trakclok.android.mapping.params.ParamsContentProject
 import com.trakclok.android.mapping.preview.PreviewContentProject
-import com.trakclok.android.ui.container.CtBoxIcon
 import com.trakclok.android.ui.container.CtIcon
 import com.trakclok.android.ui.container.CtSurface
 
@@ -62,7 +61,7 @@ fun ContentProject(@PreviewParameter(PreviewContentProject::class) params: Param
                     ripple = MaterialTheme.colorScheme.tertiary
                 ) {
                     CtIcon(
-                        res = R.drawable.ic_frame_5,
+                        res = R.drawable.vd_pause_alt,
                         tint = MaterialTheme.colorScheme.onTertiaryContainer,
                         modifier = Modifier.padding(10.dp)
                     )

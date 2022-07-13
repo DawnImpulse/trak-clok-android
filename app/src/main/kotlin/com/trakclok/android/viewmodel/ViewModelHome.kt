@@ -37,11 +37,12 @@ class ViewModelHome : ViewModel() {
     }
 
     // --- get projects
-    private fun getProjects() {
+    fun getProjects() {
 
         // --- clear projects list
         loading.value = true
         error.value = null
+        empty.value = false
 
         // --- launch scope
         viewModelScope.launch {
