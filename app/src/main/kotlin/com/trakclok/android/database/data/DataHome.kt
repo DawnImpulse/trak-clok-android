@@ -7,6 +7,7 @@ import com.trakclok.android.mapping.objects.ObjectHomeHeader
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.utils.Cfg
 import com.trakclok.android.utils.F
+import com.trakclok.android.utils.extension.log
 
 class DataHome() :
     PagingSource<Int, Any>() {
@@ -30,6 +31,7 @@ class DataHome() :
             // --- get & sort remaining based on active
             val projList = mutableListOf<ObjectProject>()
             response.children.forEach {
+                log.d(it.value.toString())
                 it.getValue(ObjectProject::class.java)?.let { l -> list.add(l) }
             }
             projList.sortBy { it.active }

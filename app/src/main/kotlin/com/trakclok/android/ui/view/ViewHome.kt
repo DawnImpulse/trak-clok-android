@@ -9,11 +9,15 @@ import androidx.compose.runtime.DisposableEffect
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.paging.compose.collectAsLazyPagingItems
 import com.trakclok.android.mapping.objects.ObjectHomeHeader
+import com.trakclok.android.mapping.objects.ObjectProject
+import com.trakclok.android.mapping.params.ParamsContentProject
 import com.trakclok.android.ui.container.CtLazy
 import com.trakclok.android.ui.content.ContentHomeHeader
+import com.trakclok.android.ui.content.ContentProject
 import com.trakclok.android.ui.item.ItemLottieRefresh
 import com.trakclok.android.ui.layout.LayoutSwipeRefresh
 import com.trakclok.android.ui.theme.TrakClokTheme
+import com.trakclok.android.utils.extension.log
 import com.trakclok.android.viewmodel.ViewModelHome
 import kotlin.coroutines.coroutineContext
 
@@ -33,6 +37,7 @@ fun ViewHome(viewModelHome: ViewModelHome = viewModel()) {
     }
 }
 
+@ExperimentalMaterialApi
 @ExperimentalMaterial3Api
 @Composable
 fun ViewHomeListing(viewModel: ViewModelHome) {
@@ -47,12 +52,6 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
         }
     ) {
 
-        // --- start timers
-        DisposableEffect(projects){
-            viewModel.startTimers(projects)
-            onDispose { viewModel.stopTimers() }
-        }
-
         // --- lazy column
         CtLazy(
             data = projects,
@@ -64,8 +63,14 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                     day = it.day,
                     month = it.month
                 )
-                else {
-
+                else if (it is ObjectProject) {
+                    viewModel.startTimer(it)
+                    ContentProject(
+                        params = ParamsContentProject(
+                            time = viewModel.listTime[it.id]!!,
+                            project = it
+                        )
+                    )
                 }
             },
 

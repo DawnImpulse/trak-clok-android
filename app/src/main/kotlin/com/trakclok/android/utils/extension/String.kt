@@ -1,4 +1,4 @@
-package com.trakclok.android.extension
+package com.trakclok.android.utils.extension
 
 import androidx.compose.ui.graphics.Color
 

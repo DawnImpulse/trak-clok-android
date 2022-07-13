@@ -13,6 +13,7 @@ import com.trakclok.android.database.data.DataHome
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
+import com.trakclok.android.utils.extension.log
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
@@ -27,55 +28,27 @@ class ViewModelHome : ViewModel() {
     var projects: Flow<PagingData<Any>> =
         Pager(PagingConfig(50)) { DataHome() }.flow.cachedIn(viewModelScope)
 
-    // --- time job
-    private lateinit var timeJob: Job
-
     // --- list of all times
-    private val listTime: MutableMap<String, MutableState<ObjectTime>> = mutableMapOf()
+    val listTime: MutableMap<String, MutableState<ObjectTime>> = mutableMapOf()
 
     /**
-     * start active timer on all projects
-     * @param projects
+     * start timer
+     * @param project
      */
-    fun startTimers(projects: LazyPagingItems<Any>) {
-        timeJob = viewModelScope.launch {
-            if (projects.itemCount > 0)
-                while (true) {
-                    val count = projects.itemCount
-                    for (c in count downTo 1) {
+    fun startTimer(project: ObjectProject) {
+        // --- run first time blocking
+        listTime[project.id] = mutableStateOf(F.parseLongTime(project.time))
 
-                        // --- get data in items
-                        val data = projects[c - 1]
+        // --- then run on bg
+        viewModelScope.launch {
+            // --- run non stop
+            while (true) {
+                // --- wait 1 second before continuing
+                delay(1000)
 
-                        // --- check if data is of type project
-                        if (data is ObjectProject) {
-                            // --- get time object
-                            val timeObj = F.parseLongTime(data.time)
-
-                            // --- if map is initialized then update value
-                            if (listTime.isNotEmpty())
-                                listTime[data.id]?.value = timeObj
-
-                            // --- else create new value
-                            else
-                                listTime[data.id] = mutableStateOf(timeObj)
-                        }
-                    }
-
-                    // --- 1 second delay
-                    delay(1000)
-                }
+                // --- get time object and set
+                listTime[project.id]?.value = F.parseLongTime(project.time)
+            }
         }
-    }
-
-    /**
-     * stop active timer job
-     */
-    fun stopTimers() {
-        if (::timeJob.isInitialized && timeJob.isActive) timeJob.cancel()
-    }
-
-    fun startTimer() {
-
     }
 }

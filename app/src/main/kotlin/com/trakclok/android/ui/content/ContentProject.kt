@@ -15,7 +15,7 @@ import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.trakclok.android.R
-import com.trakclok.android.extension.toComposeColor
+import com.trakclok.android.utils.extension.toComposeColor
 import com.trakclok.android.mapping.params.ParamsContentProject
 import com.trakclok.android.mapping.preview.PreviewContentProject
 import com.trakclok.android.ui.container.CtIcon

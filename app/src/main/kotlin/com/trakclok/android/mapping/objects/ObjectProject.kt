@@ -5,13 +5,13 @@ import com.google.firebase.database.DataSnapshot
 import com.trakclok.android.utils.ProjectType
 
 data class ObjectProject(
-    val id: String,
-    val name: String,
-    val color: String,
-    val time: Long,
-    val active: Boolean,
-    val type: String,
-    val splits: Map<String, ObjectProjectSplit>?
+    val id: String = "id",
+    val name: String = "nothing",
+    val color: String = "#FFFFFF",
+    val time: Long = 12345643211,
+    val active: Boolean = false,
+    val type: String = "Short",
+    val splits: Map<String, ObjectProjectSplit>? = null
 ){
     fun typeOf(): ProjectType{
         return ProjectType.valueOf(type)
