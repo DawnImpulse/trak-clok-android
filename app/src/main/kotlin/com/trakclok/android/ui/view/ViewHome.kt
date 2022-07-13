@@ -64,7 +64,10 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                     month = it.month
                 )
                 else if (it is ObjectProject) {
+                    // --- start timer
                     viewModel.startTimer(it)
+
+                    // --- set content
                     ContentProject(
                         params = ParamsContentProject(
                             time = viewModel.listTime[it.id]!!,

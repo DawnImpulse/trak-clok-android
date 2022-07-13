@@ -39,16 +39,17 @@ class ViewModelHome : ViewModel() {
         // --- run first time blocking
         listTime[project.id] = mutableStateOf(F.parseLongTime(project.time))
 
-        // --- then run on bg
-        viewModelScope.launch {
-            // --- run non stop
-            while (true) {
-                // --- wait 1 second before continuing
-                delay(1000)
+        // --- then run on bg (only if active)
+        if (project.active)
+            viewModelScope.launch {
+                // --- run non stop
+                while (true) {
+                    // --- wait 1 second before continuing
+                    delay(1000)
 
-                // --- get time object and set
-                listTime[project.id]?.value = F.parseLongTime(project.time)
+                    // --- get time object and set
+                    listTime[project.id]?.value = F.parseLongTime(project.time)
+                }
             }
-        }
     }
 }

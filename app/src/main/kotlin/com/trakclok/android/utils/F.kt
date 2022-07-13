@@ -2,7 +2,9 @@ package com.trakclok.android.utils
 
 import com.trakclok.android.mapping.objects.ObjectTime
 import java.text.SimpleDateFormat
+import java.time.Duration
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 object F {
@@ -43,15 +45,21 @@ object F {
 
         val current = System.currentTimeMillis()
         val diff = current - time
-        val formatter = SimpleDateFormat("d M y HH mm ss");
-        val dateArray = formatter.format(Date(diff)).split(" ")
+
+        val seconds = TimeUnit.MILLISECONDS.toSeconds(diff)
+        val minutes = seconds / 60
+        val hours = minutes / 60
+        val days = hours / 24
+        val months = days / 30
+        val years = days / 365
+
         return ObjectTime(
-            seconds = dateArray[5],
-            minutes = dateArray[4],
-            hours = dateArray[3],
-            days = dateArray[0],
-            months = dateArray[1],
-            years = dateArray[2],
+            seconds = "0${seconds.mod(60)}".takeLast(2),
+            minutes = "0${minutes.mod(60)}".takeLast(2),
+            hours = "0${hours.mod(24)}".takeLast(2),
+            days = days.mod(30).toString(),
+            months = months.mod(12).toString(),
+            years = years.toString(),
         )
     }
 }

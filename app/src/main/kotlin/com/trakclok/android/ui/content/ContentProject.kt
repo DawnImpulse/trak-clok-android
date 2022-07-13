@@ -124,5 +124,37 @@ fun ContentProject(@PreviewParameter(PreviewContentProject::class) params: Param
                 )
             }
         }
+
+        // --- days / months / years
+        Row(Modifier.padding(start = 28.dp)) {
+
+            // --- years
+            if (params.time.value.years != "0")
+                Text(
+                    text = params.time.value.years + " years, ",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+            // --- months
+            if (params.time.value.months != "0")
+                Text(
+                    text = params.time.value.months + " months, ",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+
+            // --- days
+            if (params.time.value.days != "0")
+                Text(
+                    text = params.time.value.days + " days",
+                    color = MaterialTheme.colorScheme.tertiary,
+                    style = MaterialTheme.typography.bodyMedium,
+                    fontWeight = FontWeight.Bold
+                )
+        }
+
     }
 }
