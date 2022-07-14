@@ -10,6 +10,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Card
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -26,21 +27,29 @@ import com.trakclok.android.ui.content.ContentProject
 import com.trakclok.android.ui.item.ItemLottieRefresh
 import com.trakclok.android.ui.item.ItemRaw
 import com.trakclok.android.ui.layout.LayoutListReloadError
+import com.trakclok.android.ui.other.sheet.SheetCtHome
 import com.trakclok.android.ui.theme.TrakClokTheme
 import com.trakclok.android.viewmodel.ViewModelHome
+import kotlinx.coroutines.launch
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
 @Composable
 fun ViewHome(viewModelHome: ViewModelHome = viewModel()) {
     TrakClokTheme {
-        Scaffold(
-            floatingActionButton = { },
-            bottomBar = { },
-            containerColor = MaterialTheme.colorScheme.background,
+        SheetCtHome(
+            state = viewModelHome.sheetState,
+            sheet = viewModelHome.sheet,
+            viewModelHome = viewModelHome
         ) {
-            it.calculateBottomPadding()
-            ViewHomeListing(viewModel = viewModelHome)
+            Scaffold(
+                floatingActionButton = { },
+                bottomBar = { },
+                containerColor = MaterialTheme.colorScheme.background,
+            ) {
+                it.calculateBottomPadding()
+                ViewHomeListing(viewModel = viewModelHome)
+            }
         }
     }
 }
@@ -53,6 +62,9 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
     Column(
         Modifier.verticalScroll(rememberScrollState())
     ) {
+        // --- scope
+        val scope = rememberCoroutineScope()
+
         // --- header
         ContentHomeHeader()
 
@@ -82,7 +94,8 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                 // --- add
                 Card(
                     backgroundColor = MaterialTheme.colorScheme.primary,
-                    shape = RoundedCornerShape(20.dp)
+                    shape = RoundedCornerShape(20.dp),
+                    onClick = { scope.launch { viewModel.sheetState.show() } }
                 ) {
                     Row(
                         Modifier.padding(horizontal = 24.dp, vertical = 16.dp),

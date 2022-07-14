@@ -1,5 +1,8 @@
 package com.trakclok.android.viewmodel
 
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
@@ -11,19 +14,35 @@ import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
+import com.trakclok.android.utils.Sheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
+@ExperimentalMaterialApi
 class ViewModelHome : ViewModel() {
 
     // --- projects
     val activeProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
     val inactiveProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
 
-    // --- loading & error
+    // --- state of sheet
+    val sheetState: ModalBottomSheetState =
+        ModalBottomSheetState(
+            initialValue = ModalBottomSheetValue.Hidden,
+            confirmStateChange = { true }
+        )
+
+    // ---- sheet to show
+    val sheet = mutableStateOf(Sheet.NEW_PROJECT)
+
+    // --- loading, error & empty
     val loading = mutableStateOf(true)
     val error: MutableState<String?> = mutableStateOf(null)
     val empty = mutableStateOf(false)
+
+    // --- new project
+    val projectName = mutableStateOf("")
+    val projectTime = mutableStateOf(System.currentTimeMillis())
 
     // --- refresh status
     val isRefreshing = mutableStateOf(false)
