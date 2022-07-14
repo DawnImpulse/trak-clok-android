@@ -14,6 +14,7 @@ import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
+import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -43,6 +44,7 @@ class ViewModelHome : ViewModel() {
     // --- new project
     val projectName = mutableStateOf("")
     val projectTime = mutableStateOf(System.currentTimeMillis())
+    val projectType = mutableStateOf(ProjectType.Short)
 
     // --- refresh status
     val isRefreshing = mutableStateOf(false)
