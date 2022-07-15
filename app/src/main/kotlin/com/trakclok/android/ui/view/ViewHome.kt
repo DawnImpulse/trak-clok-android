@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.Card
+import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
@@ -95,7 +96,7 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                 Card(
                     backgroundColor = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(20.dp),
-                    onClick = { scope.launch { viewModel.sheetState.show() } }
+                    onClick = { scope.launch { viewModel.sheetState.animateTo(ModalBottomSheetValue.Expanded) } }
                 ) {
                     Row(
                         Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
