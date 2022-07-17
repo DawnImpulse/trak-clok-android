@@ -1,7 +1,15 @@
 package com.trakclok.android.utils.extension
 
+import android.content.Context
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
+import androidx.compose.animation.core.tween
+import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.ModalBottomSheetState
+import androidx.compose.material.ModalBottomSheetValue
 import com.trakclok.android.BuildConfig
+import com.trakclok.android.helpers.HelperToast
 import com.trakclok.android.utils.NAME
 import java.time.LocalDate
 import java.time.LocalDateTime
@@ -24,6 +32,47 @@ fun LocalDateTime.toMilli(): Long {
     return instant.toEpochMilli()
 }
 
+/**
+ * run on main thread
+ */
+fun onMain(fn: () -> Unit) {
+    Handler(Looper.getMainLooper()).post(fn)
+}
+
+/**
+ * convert px from dp
+ * @param px
+ */
+fun Context.pxToDp(px: Float): Float {
+    return px / resources.displayMetrics.density
+}
+
+/**
+ * convert dp to px
+ * @param dp
+ */
+fun Context.dpToPx(dp: Float): Float {
+    return dp * resources.displayMetrics.density
+}
+
+// show sheet slowly
+@ExperimentalMaterialApi
+suspend fun ModalBottomSheetState.showAnim(){
+    this.animateTo(
+        ModalBottomSheetValue.Expanded,
+        anim = tween(800)
+    )
+}
+
+// hide sheet slowly
+@ExperimentalMaterialApi
+suspend fun ModalBottomSheetState.hideAnim(){
+    this.animateTo(
+        ModalBottomSheetValue.Hidden,
+        anim = tween(800)
+    )
+}
+
 // logging
 object log {
 
@@ -35,5 +84,24 @@ object log {
     // error
     fun e(message: String) {
         if (BuildConfig.DEBUG) Log.e(NAME, message)
+    }
+}
+
+// toast
+object toast {
+
+    // info
+    fun info(message: String, long: Boolean = false){
+        onMain { HelperToast.info(message, long) }
+    }
+
+    // error
+    fun error(message: String, long: Boolean = false){
+        onMain { HelperToast.error(message, long) }
+    }
+
+    // success
+    fun success(message: String, long: Boolean = false){
+        onMain { HelperToast.success(message, long) }
     }
 }

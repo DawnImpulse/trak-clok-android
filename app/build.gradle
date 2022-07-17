@@ -89,5 +89,4 @@ dependencies {
     implementation("io.github.muddz:styleabletoast:2.4.0") // styleable toast
     implementation("com.orhanobut:hawk:2.0.1") // hawk key-value storage
     implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
-    implementation("io.github.vanpra.compose-material-dialogs:core:0.8.1-rc")
 }

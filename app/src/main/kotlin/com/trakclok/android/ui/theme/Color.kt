@@ -6,6 +6,10 @@ val BLACK30 = Color(0x4D000000)
 val BLACK50 = Color(0x80000000)
 val Surface = Color(0xFFEFEBE9)
 
+val MediumSeaGreen = Color(0xFF52AA5E)
+val PermanentGeraniumLake = Color(0xFFE9202E)
+val LanquidLavender = Color(0xFFD1CCDC)
+
 val md_theme_light_primary = Color(0xFF006782)
 val md_theme_light_onPrimary = Color(0xFFffffff)
 val md_theme_light_primaryContainer = Color(0xFFb6eaff)
