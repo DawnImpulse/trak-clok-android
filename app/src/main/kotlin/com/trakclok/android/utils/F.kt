@@ -2,10 +2,8 @@ package com.trakclok.android.utils
 
 import com.trakclok.android.mapping.objects.ObjectTime
 import java.text.SimpleDateFormat
-import java.time.Duration
 import java.util.*
 import java.util.concurrent.TimeUnit
-
 
 object F {
 
@@ -61,5 +59,16 @@ object F {
             months = months.mod(12).toString(),
             years = years.toString(),
         )
+    }
+
+    /**
+     * convert milliseconds to current date
+     * @param milli
+     */
+    fun milliToCurrentDate(milli: Long): String{
+        val formatter = SimpleDateFormat("dd MMM ‘yy, hh:mm:ss", Locale.getDefault());
+        val calendar = Calendar.getInstance();
+        calendar.timeInMillis = milli;
+        return formatter.format(calendar.time);
     }
 }

@@ -7,7 +7,6 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.google.firebase.crashlytics.internal.common.CrashlyticsCore
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
 import com.trakclok.android.database.RealtimeProjects
@@ -16,11 +15,30 @@ import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
+import com.trakclok.android.utils.extension.log
+import com.trakclok.android.utils.extension.toLocalDate
+import com.trakclok.android.utils.extension.toMilli
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.Instant
+import java.time.LocalDate
+import java.time.LocalTime
+import java.time.ZoneId
+import java.time.temporal.TemporalQueries.localDate
+
 
 @ExperimentalMaterialApi
-class ViewModelHome : ViewModel() {
+class ViewModelHome() : ViewModel() {
+    // --- current system time
+    val currentTime: MutableState<Pair<String, Long>> =
+        mutableStateOf(Pair("21 Mar ‘22, 11:20:00", 1))
+
+    // --- current time job
+    lateinit var currentTimeJob: Job
+
+    // --- current time set by user
+    val currentTimeUser = mutableStateOf(false)
 
     // --- projects
     val activeProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
@@ -116,5 +134,62 @@ class ViewModelHome : ViewModel() {
                     listTime[project.id]?.value = F.parseLongTime(project.time)
                 }
             }
+    }
+
+    /**
+     * start current time
+     */
+    fun startCurrentTime() {
+        if (!currentTimeUser.value)
+            currentTimeJob = viewModelScope.launch {
+                // --- run non stop
+                while (true) {
+                    // --- wait 1 second before continuing
+                    delay(1000)
+                    log.d("here")
+
+                    // --- get time object and set
+                    val time = System.currentTimeMillis()
+                    currentTime.value = Pair(F.milliToCurrentDate(time), time)
+                }
+            }
+    }
+
+    /**
+     * stop current time
+     */
+    private fun stopCurrentTime() {
+        if (::currentTimeJob.isInitialized && currentTimeJob.isActive) currentTimeJob.cancel()
+    }
+
+    /**
+     * set current time from local date
+     * @param date
+     */
+    fun setCurrentFromLocalDate(date: LocalDate) {
+        // --- stop change active time
+        stopCurrentTime()
+
+        // --- convert to milli
+        val timeInMillis = date.toMilli()
+
+        // --- set current time
+        currentTime.value = Pair(F.milliToCurrentDate(timeInMillis), timeInMillis)
+    }
+
+    /**
+     * set current time from current time using previous time
+     * @param time
+     */
+    fun setCurrentFromLocalTime(time: LocalTime) {
+        // --- convert current time to local date
+        val date = currentTime.value.second.toLocalDate()
+
+        // --- set new time on date
+        val dateTime = date.atTime(time)
+
+        // --- set current time
+        val milli = dateTime.toMilli()
+        currentTime.value = Pair(F.milliToCurrentDate(milli), milli)
     }
 }

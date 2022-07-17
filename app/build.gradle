@@ -27,6 +27,7 @@ android {
         }
     }
     compileOptions {
+        coreLibraryDesugaringEnabled true
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
@@ -47,6 +48,7 @@ android {
 }
 
 dependencies {
+    coreLibraryDesugaring 'com.android.tools:desugar_jdk_libs:1.1.5'
 
     // ------------- androidx -------------
     implementation("androidx.core:core-ktx:1.8.0")
@@ -86,4 +88,6 @@ dependencies {
     implementation("com.airbnb.android:lottie-compose:5.0.3") // lottie
     implementation("io.github.muddz:styleabletoast:2.4.0") // styleable toast
     implementation("com.orhanobut:hawk:2.0.1") // hawk key-value storage
+    implementation("io.github.vanpra.compose-material-dialogs:datetime:0.8.1-rc")
+    implementation("io.github.vanpra.compose-material-dialogs:core:0.8.1-rc")
 }

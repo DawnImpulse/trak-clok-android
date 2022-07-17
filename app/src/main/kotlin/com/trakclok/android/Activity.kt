@@ -4,6 +4,7 @@ import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.core.view.ViewCompat
@@ -18,7 +19,7 @@ import com.trakclok.android.utils.Cfg
 
 @ExperimentalMaterial3Api
 @ExperimentalMaterialApi
-class Activity : ComponentActivity() {
+class Activity : AppCompatActivity() {
     // on create
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

@@ -17,11 +17,14 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
 import com.google.accompanist.insets.navigationBarsPadding
 import com.trakclok.android.R
 import com.trakclok.android.mapping.params.ParamSheetNewProject
@@ -30,6 +33,15 @@ import com.trakclok.android.ui.container.CtBox
 import com.trakclok.android.ui.container.CtIcon
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.ProjectTypeDetails
+import com.trakclok.android.utils.extension.toMilli
+import com.vanpra.composematerialdialogs.MaterialDialog
+import com.vanpra.composematerialdialogs.MaterialDialogButtons
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerColors
+import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.date.datepicker
+import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
+import com.vanpra.composematerialdialogs.datetime.time.timepicker
+import com.vanpra.composematerialdialogs.rememberMaterialDialogState
 
 @Preview(widthDp = 400, showBackground = true)
 @ExperimentalMaterialApi
@@ -39,6 +51,91 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
 
     // --- scope
     val scope = rememberCoroutineScope()
+    val context = LocalContext.current
+    val dateDialog = rememberMaterialDialogState()
+    val timeDialog = rememberMaterialDialogState()
+
+    // --- start active time
+    params.viewModel.startCurrentTime()
+
+    // --- date picker dialog
+    MaterialDialog(
+        dialogState = dateDialog,
+        buttons = {
+            positiveButton(
+                "NEXT",
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp
+                ),
+                onClick = { timeDialog.show() })
+            negativeButton(
+                "DISMISS",
+                TextStyle(color = MaterialTheme.colorScheme.surfaceVariant, letterSpacing = 1.sp)
+            )
+        },
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
+        shape = RoundedCornerShape(16.dp),
+    ) {
+        datepicker(
+            colors = DatePickerDefaults.colors(
+                dateActiveBackgroundColor = MaterialTheme.colorScheme.primary,
+                dateActiveTextColor = MaterialTheme.colorScheme.onPrimary,
+                headerBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                calendarHeaderTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                headerTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                dateInactiveTextColor = MaterialTheme.colorScheme.onSurface,
+                dateInactiveBackgroundColor = MaterialTheme.colorScheme.surface
+            ),
+            waitForPositiveButton = true,
+            allowedDateValidator = {
+                it.toMilli() <= System.currentTimeMillis()
+            }
+        ) {
+            params.viewModel.setCurrentFromLocalDate(it)
+        }
+    }
+
+    // --- time picker dialog
+    MaterialDialog(
+        dialogState = timeDialog,
+        buttons = {
+            positiveButton(
+                "DONE",
+                TextStyle(
+                    color = MaterialTheme.colorScheme.primary,
+                    fontWeight = FontWeight.Bold,
+                    letterSpacing = 2.sp
+                ),
+            )
+            negativeButton(
+                "DISMISS",
+                TextStyle(color = MaterialTheme.colorScheme.surfaceVariant, letterSpacing = 1.sp)
+            )
+        },
+        backgroundColor = MaterialTheme.colorScheme.surface,
+        properties = DialogProperties(dismissOnBackPress = true, dismissOnClickOutside = true),
+        shape = RoundedCornerShape(12.dp),
+    ) {
+        timepicker(
+            colors = TimePickerDefaults.colors(
+                headerTextColor = MaterialTheme.colorScheme.primary,
+                activeBackgroundColor = MaterialTheme.colorScheme.primary,
+                activeTextColor = MaterialTheme.colorScheme.onPrimary,
+                selectorColor = MaterialTheme.colorScheme.primary,
+                selectorTextColor = MaterialTheme.colorScheme.onPrimary,
+                borderColor = MaterialTheme.colorScheme.primary,
+                inactiveBackgroundColor = MaterialTheme.colorScheme.primaryContainer,
+                inactiveTextColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                inactivePeriodBackground = MaterialTheme.colorScheme.surface
+            ),
+            waitForPositiveButton = true,
+        ) {
+            params.viewModel.setCurrentFromLocalTime(it)
+        }
+    }
 
     Column(
         modifier = Modifier
@@ -129,7 +226,7 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
             }
         }
 
-        // --- time
+        // --- time text
         Text(
             text = "Starting From",
             style = MaterialTheme.typography.titleMedium,
@@ -139,11 +236,13 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
             letterSpacing = 1.sp
         )
 
+        // --- current time card
         Card(
             elevation = CardDefaults.cardElevation(defaultElevation = 0.dp),
             shape = RoundedCornerShape(20.dp),
             colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.tertiaryContainer),
-            modifier = Modifier.padding(16.dp)
+            modifier = Modifier.padding(16.dp),
+            onClick = { dateDialog.show() }
         ) {
             Box(
                 Modifier
@@ -163,7 +262,7 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
                     )
 
                     Text(
-                        text = "21 Mar ‘22, 11:20:00",
+                        text = params.viewModel.currentTime.value.first,
                         style = MaterialTheme.typography.titleMedium,
                         letterSpacing = 1.sp,
                         color = MaterialTheme.colorScheme.onTertiaryContainer,
@@ -187,7 +286,10 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
 
                         },
                         interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(bounded = true, color = MaterialTheme.colorScheme.onPrimary)
+                        indication = rememberRipple(
+                            bounded = true,
+                            color = MaterialTheme.colorScheme.onPrimary
+                        )
                     ),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(16.dp),
