@@ -31,8 +31,10 @@ import com.trakclok.android.mapping.params.ParamSheetNewProject
 import com.trakclok.android.mapping.preview.PreviewSheetState
 import com.trakclok.android.ui.container.CtBox
 import com.trakclok.android.ui.container.CtIcon
+import com.trakclok.android.ui.item.ItemLoading
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.ProjectTypeDetails
+import com.trakclok.android.utils.extension.hideAnim
 import com.trakclok.android.utils.extension.toMilli
 import com.vanpra.composematerialdialogs.MaterialDialog
 import com.vanpra.composematerialdialogs.MaterialDialogButtons
@@ -42,6 +44,7 @@ import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
+import kotlinx.coroutines.launch
 
 @Preview(widthDp = 400, showBackground = true)
 @ExperimentalMaterialApi
@@ -54,6 +57,11 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
     val context = LocalContext.current
     val dateDialog = rememberMaterialDialogState()
     val timeDialog = rememberMaterialDialogState()
+
+    if (params.viewModel.projectCreated.value)
+        LaunchedEffect(key1 = true) {
+            params.viewModel.sheetState.hideAnim()
+        }
 
     // --- start active time
     params.viewModel.startCurrentTime()
@@ -283,7 +291,7 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
                     .align(Alignment.CenterEnd)
                     .clickable(
                         onClick = {
-
+                            params.viewModel.createNewProject()
                         },
                         interactionSource = remember { MutableInteractionSource() },
                         indication = rememberRipple(
@@ -293,28 +301,34 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
                     ),
                 colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
                 shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp),
-
-                ) {
+                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+            ) {
                 Box(
                     Modifier
                         .width(124.dp)
                         .height(48.dp)
                 ) {
-                    Row(Modifier.align(Alignment.Center)) {
-                        CtIcon(
-                            res = R.drawable.vd_check_square,
-                            tint = MaterialTheme.colorScheme.onPrimary
+                    if (!params.viewModel.projectLoading.value)
+                        Row(Modifier.align(Alignment.Center)) {
+                            CtIcon(
+                                res = R.drawable.vd_check_square,
+                                tint = MaterialTheme.colorScheme.onPrimary
+                            )
+                            Text(
+                                text = "ADD",
+                                style = MaterialTheme.typography.titleMedium,
+                                letterSpacing = 1.5.sp,
+                                color = MaterialTheme.colorScheme.onPrimary,
+                                fontWeight = FontWeight.Bold,
+                                modifier = Modifier.padding(start = 12.dp)
+                            )
+                        }
+                    else
+                        ItemLoading(
+                            Modifier
+                                .align(Alignment.Center)
+                                .size(24.dp), color = MaterialTheme.colorScheme.onPrimary
                         )
-                        Text(
-                            text = "ADD",
-                            style = MaterialTheme.typography.titleMedium,
-                            letterSpacing = 1.5.sp,
-                            color = MaterialTheme.colorScheme.onPrimary,
-                            fontWeight = FontWeight.Bold,
-                            modifier = Modifier.padding(start = 12.dp)
-                        )
-                    }
                 }
             }
         }

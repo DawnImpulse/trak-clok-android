@@ -30,6 +30,7 @@ import com.trakclok.android.ui.item.ItemRaw
 import com.trakclok.android.ui.layout.LayoutListReloadError
 import com.trakclok.android.ui.other.sheet.SheetCtHome
 import com.trakclok.android.ui.theme.TrakClokTheme
+import com.trakclok.android.utils.extension.showAnim
 import com.trakclok.android.viewmodel.ViewModelHome
 import kotlinx.coroutines.launch
 
@@ -96,7 +97,12 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                 Card(
                     backgroundColor = MaterialTheme.colorScheme.primary,
                     shape = RoundedCornerShape(20.dp),
-                    onClick = { scope.launch { viewModel.sheetState.animateTo(ModalBottomSheetValue.Expanded) } }
+                    onClick = {
+                        scope.launch {
+                            viewModel.projectCreated.value = false
+                            viewModel.sheetState.showAnim()
+                        }
+                    }
                 ) {
                     Row(
                         Modifier.padding(horizontal = 24.dp, vertical = 16.dp),

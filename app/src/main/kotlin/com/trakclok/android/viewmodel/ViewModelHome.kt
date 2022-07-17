@@ -9,15 +9,14 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
+import com.trakclok.android.database.RealtimeGeneric
 import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
-import com.trakclok.android.utils.extension.log
-import com.trakclok.android.utils.extension.toLocalDate
-import com.trakclok.android.utils.extension.toMilli
+import com.trakclok.android.utils.extension.*
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -36,9 +35,6 @@ class ViewModelHome() : ViewModel() {
 
     // --- current time job
     lateinit var currentTimeJob: Job
-
-    // --- current time set by user
-    val currentTimeUser = mutableStateOf(false)
 
     // --- projects
     val activeProjects: MutableState<List<ObjectProject>> = mutableStateOf(listOf())
@@ -63,6 +59,8 @@ class ViewModelHome() : ViewModel() {
     val projectName = mutableStateOf("")
     val projectTime = mutableStateOf(System.currentTimeMillis())
     val projectType = mutableStateOf(ProjectType.Short)
+    val projectLoading = mutableStateOf(false)
+    val projectCreated = mutableStateOf(false)
 
     // --- refresh status
     val isRefreshing = mutableStateOf(false)
@@ -140,19 +138,17 @@ class ViewModelHome() : ViewModel() {
      * start current time
      */
     fun startCurrentTime() {
-        if (!currentTimeUser.value)
-            currentTimeJob = viewModelScope.launch {
-                // --- run non stop
-                while (true) {
-                    // --- wait 1 second before continuing
-                    delay(1000)
-                    log.d("here")
+        currentTimeJob = viewModelScope.launch {
+            // --- run non stop
+            while (true) {
+                // --- wait 1 second before continuing
+                delay(1000)
 
-                    // --- get time object and set
-                    val time = System.currentTimeMillis()
-                    currentTime.value = Pair(F.milliToCurrentDate(time), time)
-                }
+                // --- get time object and set
+                val time = System.currentTimeMillis()
+                currentTime.value = Pair(F.milliToCurrentDate(time), time)
             }
+        }
     }
 
     /**
@@ -191,5 +187,46 @@ class ViewModelHome() : ViewModel() {
         // --- set current time
         val milli = dateTime.toMilli()
         currentTime.value = Pair(F.milliToCurrentDate(milli), milli)
+    }
+
+    /**
+     * create new project
+     */
+    fun createNewProject() {
+        // --- stop current time job if active
+        projectLoading.value = true
+        stopCurrentTime()
+
+        // --- check time is less than current
+        if (currentTime.value.second <= System.currentTimeMillis())
+            viewModelScope.launch {
+                try {
+                    RealtimeProjects.createProject(
+                        projectName.value,
+                        currentTime.value.second,
+                        projectType.value
+                    )
+
+                    // --- reset value
+                    projectName.value = ""
+                    val current = System.currentTimeMillis()
+                    currentTime.value = Pair(F.milliToCurrentDate(current), current)
+
+                    projectLoading.value = false
+                    projectCreated.value = true
+                }
+                // --- catch exception
+                catch (e: Exception) {
+                    toast.error(e.message ?: "something went wrong; please try again")
+                    projectLoading.value = false
+                    Firebase.crashlytics.recordException(e)
+                    e.printStackTrace()
+                }
+            }
+        // --- else show error
+        else {
+            toast.error("selected time should be less than current time")
+            projectLoading.value = false
+        }
     }
 }
