@@ -9,22 +9,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
 import com.google.firebase.ktx.Firebase
-import com.trakclok.android.database.RealtimeGeneric
 import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
-import com.trakclok.android.utils.extension.*
+import com.trakclok.android.utils.extension.toLocalDate
+import com.trakclok.android.utils.extension.toMilli
+import com.trakclok.android.utils.extension.toast
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.time.Instant
 import java.time.LocalDate
 import java.time.LocalTime
-import java.time.ZoneId
-import java.time.temporal.TemporalQueries.localDate
 
 
 @ExperimentalMaterialApi
@@ -83,31 +81,32 @@ class ViewModelHome() : ViewModel() {
 
         // --- launch scope
         viewModelScope.launch {
-            try {
-                val list = RealtimeProjects.getList()
-                val active = mutableListOf<ObjectProject>()
-                val inactive = mutableListOf<ObjectProject>()
-
-                // --- create list of active & inactive
-                list.forEach {
-                    if (it.active) active.add(it)
-                    else inactive.add(it)
+            RealtimeProjects.getList { err, data ->
+                err?.let {
+                    error.value = err.message
+                    loading.value = false
+                    err.printStackTrace()
+                    Firebase.crashlytics.recordException(err)
                 }
 
-                // --- check if empty
-                empty.value = active.isEmpty() && inactive.isEmpty()
-                loading.value = false
+                data?.let { list ->
+                    val active = mutableListOf<ObjectProject>()
+                    val inactive = mutableListOf<ObjectProject>()
 
-                // --- set lists
-                activeProjects.value = active
-                inactiveProjects.value = inactive
-            }
-            // --- exception
-            catch (e: Exception) {
-                error.value = e.message
-                loading.value = false
-                e.printStackTrace()
-                Firebase.crashlytics.recordException(e)
+                    // --- create list of active & inactive
+                    list.forEach {
+                        if (it.active) active.add(it)
+                        else inactive.add(it)
+                    }
+
+                    // --- check if empty
+                    empty.value = active.isEmpty() && inactive.isEmpty()
+                    loading.value = false
+
+                    // --- set lists
+                    activeProjects.value = active
+                    inactiveProjects.value = inactive
+                }
             }
         }
     }
