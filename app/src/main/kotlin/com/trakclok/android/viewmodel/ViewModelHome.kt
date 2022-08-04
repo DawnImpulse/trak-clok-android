@@ -5,6 +5,7 @@ import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
@@ -13,6 +14,7 @@ import com.google.firebase.ktx.Firebase
 import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.mapping.objects.ObjectTime
+import com.trakclok.android.ui.theme.MacAndCheese
 import com.trakclok.android.utils.F
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
@@ -61,6 +63,7 @@ class ViewModelHome() : ViewModel() {
     val projectType = mutableStateOf(ProjectType.Short)
     val projectLoading = mutableStateOf(false)
     val projectCreated = mutableStateOf(false)
+    val projectColor = mutableStateOf(MacAndCheese)
 
     // --- refresh status
     val isRefreshing = mutableStateOf(false)
@@ -205,7 +208,8 @@ class ViewModelHome() : ViewModel() {
                     RealtimeProjects.createProject(
                         projectName.value,
                         currentTime.value.second,
-                        projectType.value
+                        projectType.value,
+                        projectColor.value
                     )
 
                     // --- reset value
@@ -226,5 +230,13 @@ class ViewModelHome() : ViewModel() {
             toast.error("selected time should be less than current time")
             projectLoading.value = false
         }
+    }
+
+    /**
+     * select a color
+     * @param color
+     */
+    fun selectColor(color: Color) {
+        projectColor.value = color
     }
 }

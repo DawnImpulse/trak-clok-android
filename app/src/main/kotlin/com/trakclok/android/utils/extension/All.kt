@@ -8,6 +8,7 @@ import androidx.compose.animation.core.tween
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.ModalBottomSheetValue
+import androidx.compose.ui.graphics.Color
 import com.trakclok.android.BuildConfig
 import com.trakclok.android.helpers.HelperToast
 import com.trakclok.android.utils.NAME
@@ -71,6 +72,16 @@ suspend fun ModalBottomSheetState.hideAnim(){
         ModalBottomSheetValue.Hidden,
         anim = tween(800)
     )
+}
+
+/**
+ * convert color to hex code
+ */
+fun Color.toHexCode(): String {
+    val red = this.red * 255
+    val green = this.green * 255
+    val blue = this.blue * 255
+    return String.format("#%02x%02x%02x", red.toInt(), green.toInt(), blue.toInt())
 }
 
 // logging

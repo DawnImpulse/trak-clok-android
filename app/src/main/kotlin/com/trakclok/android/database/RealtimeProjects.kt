@@ -1,9 +1,11 @@
 package com.trakclok.android.database
 
+import androidx.compose.ui.graphics.Color
 import com.trakclok.android.helpers.HelperAuth
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.utils.Cfg
 import com.trakclok.android.utils.ProjectType
+import com.trakclok.android.utils.extension.toHexCode
 
 object RealtimeProjects {
 
@@ -30,7 +32,7 @@ object RealtimeProjects {
      * @param time
      * @param type
      */
-    suspend fun createProject(name: String, time: Long, type: ProjectType): Boolean {
+    suspend fun createProject(name: String, time: Long, type: ProjectType, color: Color): Boolean {
         val projectsPath = "/users/${HelperAuth.user().uid}/projects"
         val key = RealtimeGeneric.database.child(projectsPath).push().key
 
@@ -39,7 +41,7 @@ object RealtimeProjects {
             mapOf(
                 "$projectsPath/$key" to ObjectProject(
                     id = key,
-                    color = "#FF6663",
+                    color = color.toHexCode(),
                     time = time,
                     splits = null,
                     active = true,

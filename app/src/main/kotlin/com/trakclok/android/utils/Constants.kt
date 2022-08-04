@@ -1,9 +1,17 @@
 package com.trakclok.android.utils
 
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.ui.graphics.Color
+import com.trakclok.android.ui.theme.Capri
+import com.trakclok.android.ui.theme.MacAndCheese
+import com.trakclok.android.ui.theme.Sage
+import com.trakclok.android.ui.theme.TiffanyBlue
+
 const val NAME = "TrakClok"
 const val DB_URL = ""
 
 const val PAGE_SIZE = 50
+val COLORS = listOf(MacAndCheese, TiffanyBlue, Sage, Capri)
 
 enum class DarkMode { Dark, Light, System }
 enum class ProjectType { Long, Short }

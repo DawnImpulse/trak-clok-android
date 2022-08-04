@@ -10,6 +10,11 @@ val MediumSeaGreen = Color(0xFF52AA5E)
 val PermanentGeraniumLake = Color(0xFFE9202E)
 val LanquidLavender = Color(0xFFD1CCDC)
 
+val MacAndCheese = Color(0xFFEDB88B)
+val TiffanyBlue = Color(0xFF17BEBB)
+val Sage = Color(0xFFD6CA98)
+val Capri = Color(0xFF5CC8FF)
+
 val md_theme_light_primary = Color(0xFF006782)
 val md_theme_light_onPrimary = Color(0xFFffffff)
 val md_theme_light_primaryContainer = Color(0xFFb6eaff)

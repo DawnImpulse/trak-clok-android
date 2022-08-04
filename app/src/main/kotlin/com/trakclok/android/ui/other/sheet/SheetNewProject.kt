@@ -1,23 +1,18 @@
 package com.trakclok.android.ui.other.sheet
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
-import androidx.compose.material.TextField
 import androidx.compose.material.ripple.rememberRipple
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
+import androidx.compose.ui.ExperimentalComposeUiApi
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
@@ -33,23 +28,22 @@ import com.google.accompanist.insets.navigationBarsPadding
 import com.trakclok.android.R
 import com.trakclok.android.mapping.params.ParamSheetNewProject
 import com.trakclok.android.mapping.preview.PreviewSheetState
-import com.trakclok.android.ui.container.CtBox
+import com.trakclok.android.ui.container.CtCard
 import com.trakclok.android.ui.container.CtIcon
 import com.trakclok.android.ui.item.ItemLoading
-import com.trakclok.android.utils.ProjectType
+import com.trakclok.android.utils.COLORS
 import com.trakclok.android.utils.ProjectTypeDetails
 import com.trakclok.android.utils.extension.hideAnim
 import com.trakclok.android.utils.extension.toMilli
+import com.trakclok.android.viewmodel.ViewModelHome
 import com.vanpra.composematerialdialogs.MaterialDialog
-import com.vanpra.composematerialdialogs.MaterialDialogButtons
-import com.vanpra.composematerialdialogs.datetime.date.DatePickerColors
 import com.vanpra.composematerialdialogs.datetime.date.DatePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.date.datepicker
 import com.vanpra.composematerialdialogs.datetime.time.TimePickerDefaults
 import com.vanpra.composematerialdialogs.datetime.time.timepicker
 import com.vanpra.composematerialdialogs.rememberMaterialDialogState
-import kotlinx.coroutines.launch
 
+@ExperimentalComposeUiApi
 @Preview(widthDp = 400, showBackground = true)
 @ExperimentalMaterialApi
 @ExperimentalMaterial3Api
@@ -174,7 +168,10 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
                 .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 24.dp),
             shape = RoundedCornerShape(16.dp),
             maxLines = 1,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
+            keyboardOptions = KeyboardOptions(
+                keyboardType = KeyboardType.Text,
+                imeAction = ImeAction.Next
+            )
         )
 
         // --- type of project
@@ -236,12 +233,25 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
             }
         }
 
+        // --- color text
+        Text(
+            text = "Choose Color",
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.primary,
+            modifier = Modifier.padding(start = 54.dp, top = 32.dp),
+            fontWeight = FontWeight.Bold,
+            letterSpacing = 1.sp
+        )
+
+        // --- color list
+        SheetNewProjectColorList(viewModel = params.viewModel)
+
         // --- time text
         Text(
             text = "Starting From",
             style = MaterialTheme.typography.titleMedium,
             color = MaterialTheme.colorScheme.primary,
-            modifier = Modifier.padding(start = 54.dp, top = 32.dp),
+            modifier = Modifier.padding(start = 54.dp, top = 48.dp),
             fontWeight = FontWeight.Bold,
             letterSpacing = 1.sp
         )
@@ -334,6 +344,46 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
                             )
                     }
                 }
+            }
+        }
+    }
+}
+
+@ExperimentalComposeUiApi
+@ExperimentalMaterial3Api
+@ExperimentalMaterialApi
+@Composable
+fun SheetNewProjectColorList(viewModel: ViewModelHome){
+    Row(
+        Modifier.padding(start = 16.dp, top = 16.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        COLORS.forEach { color ->
+            Box(Modifier.padding(end = 16.dp)) {
+                // --- if selected color then show highlight
+                if (viewModel.projectColor.value == color)
+                    Card(
+                        Modifier.size(34.dp),
+                        shape = RoundedCornerShape(12.dp),
+                        border = BorderStroke(2.dp, color),
+                        colors = CardDefaults.cardColors(MaterialTheme.colorScheme.surface)
+                    ) {
+                        CtCard(
+                            shape = RoundedCornerShape(8.dp),
+                            colors = CardDefaults.cardColors(color),
+                            boxWidth = 34.dp,
+                            cardWidth = 24.dp,
+                            click = {}
+                        ) {}
+                    }
+                else
+                    CtCard(
+                        shape = RoundedCornerShape(8.dp),
+                        colors = CardDefaults.cardColors(color),
+                        boxWidth = 24.dp,
+                        click = { viewModel.selectColor(color) }
+                    ) {
+                    }
             }
         }
     }
