@@ -10,7 +10,6 @@ import com.trakclok.android.database.RealtimeGeneric
 object Cfg {
     lateinit var navigation: NavHostController // nav controller
 
-    val realtimeGeneric: RealtimeGeneric by lazy { RealtimeGeneric() } // realtime generic
     var topInset = 0 // top display cutout inset
     val darkMode: MutableState<DarkMode> =
         mutableStateOf(DarkMode.System) // current dark mode status

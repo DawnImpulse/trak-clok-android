@@ -8,6 +8,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.firebase.crashlytics.ktx.crashlytics
+import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import com.trakclok.android.database.RealtimeProjects
 import com.trakclok.android.mapping.objects.ObjectProject

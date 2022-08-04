@@ -1,5 +1,6 @@
 package com.trakclok.android.database
 
+import com.trakclok.android.helpers.HelperAuth
 import com.trakclok.android.mapping.objects.ObjectProject
 import com.trakclok.android.utils.Cfg
 import com.trakclok.android.utils.ProjectType
@@ -11,7 +12,7 @@ object RealtimeProjects {
      */
     suspend fun getList(callback: (error: Exception?, data: List<ObjectProject>?) -> Unit) {
         // --- get response from path
-        Cfg.realtimeGeneric.change("/users/dsfd/projects") { error, snapshot ->
+        RealtimeGeneric.change("/users/${HelperAuth.user().uid}/projects") { error, snapshot ->
             error?.let { callback(error, null) }
             snapshot?.let {
                 // --- parse response
@@ -29,20 +30,23 @@ object RealtimeProjects {
      * @param time
      * @param type
      */
-    suspend fun createProject(name: String, time: Long, type: ProjectType) =
-        Cfg.realtimeGeneric.update(
+    suspend fun createProject(name: String, time: Long, type: ProjectType): Boolean {
+        val projectsPath = "/users/${HelperAuth.user().uid}/projects"
+        val key = RealtimeGeneric.database.child(projectsPath).push().key
+
+        if (key == null) throw Exception("couldn't create unique data; please try again")
+        else return RealtimeGeneric.update(
             mapOf(
-                Pair(
-                    "/users/dsfd/projects/asdfe", ObjectProject(
-                        id = "asdfe",
-                        color = "#FF6663",
-                        time = time,
-                        splits = null,
-                        active = true,
-                        type = type.name,
-                        name = name
-                    )
+                "$projectsPath/$key" to ObjectProject(
+                    id = key,
+                    color = "#FF6663",
+                    time = time,
+                    splits = null,
+                    active = true,
+                    type = type.name,
+                    name = name
                 )
             )
         )
+    }
 }

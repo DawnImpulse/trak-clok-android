@@ -8,10 +8,8 @@ import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlin.coroutines.suspendCoroutine
 
-open class RealtimeGeneric {
-    private val database: DatabaseReference by lazy {
-        Firebase.database.reference
-    }
+object RealtimeGeneric {
+    val database: DatabaseReference = Firebase.database.reference
 
     /**
      * check if value exists on given path
