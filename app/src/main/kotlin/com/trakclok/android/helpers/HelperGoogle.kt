@@ -39,6 +39,7 @@ object HelperGoogle {
             .setGoogleIdTokenRequestOptions(
                 BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
                     .setSupported(true)
+                    .setServerClientId(BuildConfig.GOOGLE_WEB_TOKEN)
                     .setFilterByAuthorizedAccounts(false)
                     .build()
             )

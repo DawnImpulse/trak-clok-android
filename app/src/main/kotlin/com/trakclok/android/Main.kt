@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.trakclok.android.helpers.HelperAuth
 import com.trakclok.android.ui.view.ViewAuth
 import com.trakclok.android.ui.view.ViewHome
 import com.trakclok.android.utils.Cfg
@@ -15,8 +16,14 @@ import com.trakclok.android.utils.Route
 @ExperimentalMaterial3Api
 @Composable
 fun Main(navController: NavHostController) {
+
+    // --- initialize controller
     Cfg.navigation = navController
-    NavHost(navController = navController, startDestination = Route.Auth.label) {
+
+    // --- start destination
+    val start = if (HelperAuth.loggedIn()) Route.Home.label else Route.Auth.label
+
+    NavHost(navController = navController, startDestination = start) {
         // --- home screen
         composable(Route.Home.label) { ViewHome() }
 

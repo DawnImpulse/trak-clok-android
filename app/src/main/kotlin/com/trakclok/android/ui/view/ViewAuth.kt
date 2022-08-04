@@ -1,14 +1,16 @@
 package com.trakclok.android.ui.view
 
+import android.app.Activity
+import android.content.Context
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -17,6 +19,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,23 +30,32 @@ import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
 import com.airbnb.lottie.compose.rememberLottieComposition
 import com.trakclok.android.R
+import com.trakclok.android.helpers.HelperAuth
 import com.trakclok.android.ui.container.CtButton
-import com.trakclok.android.ui.item.ItemLottieRefresh
-import com.trakclok.android.ui.item.ItemRaw
 import com.trakclok.android.ui.other.dialog.DialogLoading
+import com.trakclok.android.utils.Cfg
+import com.trakclok.android.utils.Route
 import com.trakclok.android.viewmodel.ViewModelAuth
 
 @ExperimentalMaterial3Api
 @Preview(widthDp = 400, showBackground = true, showSystemUi = true)
 @Composable
 fun ViewAuth(viewModelAuth: ViewModelAuth = viewModel()) {
+
+    // --- utils
     val scope = rememberCoroutineScope()
+    val context: Context = LocalContext.current
+    val result =
+        rememberLauncherForActivityResult(contract = ActivityResultContracts.StartIntentSenderForResult()) {
+            viewModelAuth.finishGoogleLogin(context as Activity, it)
+        }
 
     // --- show loading dialog
     AnimatedVisibility(visible = viewModelAuth.loading.value) {
         DialogLoading()
     }
 
+    // --- layout
     Box(Modifier.background(MaterialTheme.colorScheme.background)) {
         Column(
             Modifier
@@ -89,7 +101,7 @@ fun ViewAuth(viewModelAuth: ViewModelAuth = viewModel()) {
             // --- google button
             Box(Modifier.padding(top = 64.dp)) {
                 CtButton(
-                    onClick = { /*TODO*/ },
+                    onClick = { viewModelAuth.startGoogleLogin(context, result) },
                     label = "GOOGLE",
                     color = MaterialTheme.colorScheme.primary,
                     modifier = Modifier
