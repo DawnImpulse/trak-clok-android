@@ -6,6 +6,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import com.trakclok.android.ui.view.ViewAuth
 import com.trakclok.android.ui.view.ViewHome
 import com.trakclok.android.utils.Cfg
 import com.trakclok.android.utils.Route
@@ -15,10 +16,12 @@ import com.trakclok.android.utils.Route
 @Composable
 fun Main(navController: NavHostController) {
     Cfg.navigation = navController
-    NavHost(navController = navController, startDestination = Route.Home.label) {
+    NavHost(navController = navController, startDestination = Route.Auth.label) {
         // --- home screen
         composable(Route.Home.label) { ViewHome() }
 
+        // --- auth screen
+        composable(Route.Auth.label) { ViewAuth() }
 
     }
 }

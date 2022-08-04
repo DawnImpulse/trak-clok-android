@@ -6,6 +6,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.DpSize
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 
 @Composable
@@ -15,8 +18,9 @@ fun CtButton(
     color: Color,
     modifier: Modifier = Modifier,
     labelStyle: TextStyle = MaterialTheme.typography.labelMedium,
+    labelSpacing: TextUnit = TextUnit.Unspecified,
     shape: RoundedCornerShape = RoundedCornerShape(8.dp),
-    enabled: Boolean = true
+    enabled: Boolean = true,
 ) {
     // background
     Button(
@@ -32,7 +36,8 @@ fun CtButton(
         Text(
             text = label,
             style = labelStyle,
-            color = MaterialTheme.colorScheme.contentColorFor(color)
+            color = MaterialTheme.colorScheme.contentColorFor(color),
+            letterSpacing = labelSpacing
         )
     }
 }
