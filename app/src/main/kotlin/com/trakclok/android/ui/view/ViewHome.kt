@@ -19,6 +19,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.trakclok.android.R
+import com.trakclok.android.mapping.params.ParamsContentHomeHeader
 import com.trakclok.android.mapping.params.ParamsContentProject
 import com.trakclok.android.ui.container.CtButton
 import com.trakclok.android.ui.container.CtIcon
@@ -30,6 +31,7 @@ import com.trakclok.android.ui.item.ItemRaw
 import com.trakclok.android.ui.layout.LayoutListReloadError
 import com.trakclok.android.ui.other.sheet.SheetCtHome
 import com.trakclok.android.ui.theme.TrakClokTheme
+import com.trakclok.android.utils.F
 import com.trakclok.android.utils.extension.showAnim
 import com.trakclok.android.viewmodel.ViewModelHome
 import kotlinx.coroutines.launch
@@ -68,7 +70,14 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
         val scope = rememberCoroutineScope()
 
         // --- header
-        ContentHomeHeader()
+        ContentHomeHeader(
+            ParamsContentHomeHeader(
+                day = F.currentDay(),
+                month = F.currentMonth(),
+                date = F.currentDate(),
+                viewModel = viewModel
+            )
+        )
 
         // --- loading
         AnimatedVisibility(visible = viewModel.loading.value) {
@@ -100,6 +109,7 @@ fun ViewHomeListing(viewModel: ViewModelHome) {
                     onClick = {
                         scope.launch {
                             viewModel.projectCreated.value = false
+                            viewModel.startCurrentTime()
                             viewModel.sheetState.showAnim()
                         }
                     }

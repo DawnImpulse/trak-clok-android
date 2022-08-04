@@ -15,6 +15,7 @@ import com.trakclok.android.mapping.objects.ObjectTime
 import com.trakclok.android.utils.F
 import com.trakclok.android.utils.ProjectType
 import com.trakclok.android.utils.Sheet
+import com.trakclok.android.utils.extension.log
 import com.trakclok.android.utils.extension.toLocalDate
 import com.trakclok.android.utils.extension.toMilli
 import com.trakclok.android.utils.extension.toast
@@ -23,13 +24,13 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import java.time.LocalDate
 import java.time.LocalTime
-
+import java.time.ZoneOffset
 
 @ExperimentalMaterialApi
 class ViewModelHome() : ViewModel() {
     // --- current system time
     val currentTime: MutableState<Pair<String, Long>> =
-        mutableStateOf(Pair("21 Mar ‘22, 11:20:00", 1))
+        mutableStateOf(Pair("04 Aug '22, 09:10:00", 0))
 
     // --- current time job
     lateinit var currentTimeJob: Job
@@ -208,9 +209,6 @@ class ViewModelHome() : ViewModel() {
 
                     // --- reset value
                     projectName.value = ""
-                    val current = System.currentTimeMillis()
-                    currentTime.value = Pair(F.milliToCurrentDate(current), current)
-
                     projectLoading.value = false
                     projectCreated.value = true
                 }

@@ -9,6 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.ModalBottomSheetState
 import androidx.compose.material.TextField
@@ -20,6 +22,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.tooling.preview.PreviewParameter
 import androidx.compose.ui.unit.dp
@@ -52,7 +56,6 @@ import kotlinx.coroutines.launch
 @Composable
 fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamSheetNewProject) {
 
-    // --- scope
     val scope = rememberCoroutineScope()
     val context = LocalContext.current
     val dateDialog = rememberMaterialDialogState()
@@ -62,9 +65,6 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
         LaunchedEffect(key1 = true) {
             params.viewModel.sheetState.hideAnim()
         }
-
-    // --- start active time
-    params.viewModel.startCurrentTime()
 
     // --- date picker dialog
     MaterialDialog(
@@ -172,7 +172,9 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 20.dp, top = 24.dp, end = 20.dp, bottom = 24.dp),
-            shape = RoundedCornerShape(16.dp)
+            shape = RoundedCornerShape(16.dp),
+            maxLines = 1,
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Text, imeAction = ImeAction.Next)
         )
 
         // --- type of project
@@ -281,57 +283,58 @@ fun SheetNewProject(@PreviewParameter(PreviewSheetState::class) params: ParamShe
         }
 
         // --- add
-        Box(
-            Modifier
-                .fillMaxWidth()
-                .padding(top = 36.dp, end = 16.dp, bottom = 24.dp)
-        ) {
-            Card(
+        AnimatedVisibility(visible = params.viewModel.projectName.value.isNotEmpty()) {
+            Box(
                 Modifier
-                    .align(Alignment.CenterEnd)
-                    .clickable(
-                        onClick = {
-                            params.viewModel.createNewProject()
-                        },
-                        interactionSource = remember { MutableInteractionSource() },
-                        indication = rememberRipple(
-                            bounded = true,
-                            color = MaterialTheme.colorScheme.onPrimary
-                        )
-                    ),
-                colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
-                shape = RoundedCornerShape(16.dp),
-                elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
+                    .fillMaxWidth()
+                    .padding(top = 36.dp, end = 16.dp, bottom = 24.dp)
             ) {
-                Box(
+                Card(
                     Modifier
-                        .width(124.dp)
-                        .height(48.dp)
+                        .align(Alignment.CenterEnd)
+                        .clickable(
+                            onClick = {
+                                params.viewModel.createNewProject()
+                            },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = rememberRipple(
+                                bounded = true,
+                                color = MaterialTheme.colorScheme.onPrimary
+                            )
+                        ),
+                    colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.primary),
+                    shape = RoundedCornerShape(16.dp),
+                    elevation = CardDefaults.cardElevation(defaultElevation = 4.dp)
                 ) {
-                    if (!params.viewModel.projectLoading.value)
-                        Row(Modifier.align(Alignment.Center)) {
-                            CtIcon(
-                                res = R.drawable.vd_check_square,
-                                tint = MaterialTheme.colorScheme.onPrimary
+                    Box(
+                        Modifier
+                            .width(124.dp)
+                            .height(48.dp)
+                    ) {
+                        if (!params.viewModel.projectLoading.value)
+                            Row(Modifier.align(Alignment.Center)) {
+                                CtIcon(
+                                    res = R.drawable.vd_check_square,
+                                    tint = MaterialTheme.colorScheme.onPrimary
+                                )
+                                Text(
+                                    text = "ADD",
+                                    style = MaterialTheme.typography.titleMedium,
+                                    letterSpacing = 1.5.sp,
+                                    color = MaterialTheme.colorScheme.onPrimary,
+                                    fontWeight = FontWeight.Bold,
+                                    modifier = Modifier.padding(start = 12.dp)
+                                )
+                            }
+                        else
+                            ItemLoading(
+                                Modifier
+                                    .align(Alignment.Center)
+                                    .size(24.dp), color = MaterialTheme.colorScheme.onPrimary
                             )
-                            Text(
-                                text = "ADD",
-                                style = MaterialTheme.typography.titleMedium,
-                                letterSpacing = 1.5.sp,
-                                color = MaterialTheme.colorScheme.onPrimary,
-                                fontWeight = FontWeight.Bold,
-                                modifier = Modifier.padding(start = 12.dp)
-                            )
-                        }
-                    else
-                        ItemLoading(
-                            Modifier
-                                .align(Alignment.Center)
-                                .size(24.dp), color = MaterialTheme.colorScheme.onPrimary
-                        )
+                    }
                 }
             }
         }
-
     }
 }
