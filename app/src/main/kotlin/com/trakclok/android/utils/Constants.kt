@@ -9,6 +9,14 @@ enum class DarkMode { Dark, Light, System }
 enum class ProjectType { Long, Short }
 enum class Sheet { NEW_PROJECT }
 
+object Errors {
+    const val google_no_ui = 101
+    const val google_intent = 102
+    const val google_missing_token = 103
+    const val google_firebase = 104
+    const val google_ui_error = 105
+}
+
 val ProjectTypeDetails = mutableMapOf(
     Pair(
         ProjectType.Long,

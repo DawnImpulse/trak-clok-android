@@ -1,10 +1,12 @@
 package com.trakclok.android.ui.view
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -19,6 +21,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.airbnb.lottie.compose.LottieAnimation
 import com.airbnb.lottie.compose.LottieCompositionSpec
 import com.airbnb.lottie.compose.LottieConstants
@@ -27,11 +30,19 @@ import com.trakclok.android.R
 import com.trakclok.android.ui.container.CtButton
 import com.trakclok.android.ui.item.ItemLottieRefresh
 import com.trakclok.android.ui.item.ItemRaw
+import com.trakclok.android.ui.other.dialog.DialogLoading
+import com.trakclok.android.viewmodel.ViewModelAuth
 
+@ExperimentalMaterial3Api
 @Preview(widthDp = 400, showBackground = true, showSystemUi = true)
 @Composable
-fun ViewAuth() {
+fun ViewAuth(viewModelAuth: ViewModelAuth = viewModel()) {
     val scope = rememberCoroutineScope()
+
+    // --- show loading dialog
+    AnimatedVisibility(visible = viewModelAuth.loading.value) {
+        DialogLoading()
+    }
 
     Box(Modifier.background(MaterialTheme.colorScheme.background)) {
         Column(
@@ -96,7 +107,10 @@ fun ViewAuth() {
                     .padding(top = 64.dp, bottom = 36.dp)
                     .fillMaxWidth()
             ) {
-                Row(Modifier.align(Alignment.Center), verticalAlignment = Alignment.CenterVertically) {
+                Row(
+                    Modifier.align(Alignment.Center),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
                     Text(
                         text = "T&C",
                         style = MaterialTheme.typography.labelLarge,
